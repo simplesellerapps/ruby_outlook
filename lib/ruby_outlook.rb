@@ -257,15 +257,20 @@ module RubyOutlook
     # token (string): access token
     # view_size (int): maximum number of results
     # page (int): What page to fetch (multiple of view size)
+    # filter (string)
     # fields (array): An array of field names to include in results
     # sort (hash): { sort_field: field_to_sort_on, sort_order: 'ASC' | 'DESC' }
     # user (string): The user to make the call for. If nil, use the 'Me' constant.
-    def get_messages(token, view_size, page, fields = nil, sort = nil, user = nil)
+    def get_messages(token, view_size, page, filter = nil, fields = nil, sort = nil, user = nil)
       request_url = user_context(user) << "/Messages"
       request_params = {
           '$top' => view_size,
           '$skip' => (page - 1) * view_size
       }
+
+      unless filter.nil?
+        request_params['$filter'] = filter
+      end
 
       unless fields.nil?
         request_params['$select'] = fields.join(',')
